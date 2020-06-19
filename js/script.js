@@ -92,4 +92,59 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
     setClock('.timer', deadLine);
+
+
+    // modal
+    const modalTrigger = document.querySelectorAll('[data-modal]'),
+        modal = document.querySelector('.modal'),
+        modalCloseBtn = document.querySelector('[data-close]');
+
+
+    // примитивный вариант - на прямых обработчиках (не-тоггл) и квериселектор(без олл). Для теста (?)
+    // modalTrigger.addEventListener('click', () => {
+    //     modal.classList.add('show');
+    //     modal.classList.remove('hide');
+    //     document.body.style.overflow = 'hidden'; // чтобы не скроллилась страница и модалка при открытой модалке
+    // });
+
+    // modalCloseBtn.addEventListener('click', () => {
+    //     modal.classList.remove('show');
+    //     modal.classList.add('hide');
+    //     document.body.style.overflow = ''; // восстанавливаем скролл. Пустые кавычкии восстановят дефолт
+    // });
+    
+    // чтобы использовать toggle, проверяем, есть ли в вёрстке, по умолчанию, необходимые классы
+    // modalTrigger.addEventListener('click', () => {
+    //     modal.classList.toggle('show');
+    //     document.body.style.overflow = 'hidden'; // чтобы не скроллилась страница и модалка при открытой модалке
+    // });
+
+    
+    modalTrigger.forEach(btn => {                    // через forEach, для querySelectorAll
+        btn.addEventListener('click', () => {
+            modal.classList.toggle('show');
+            document.body.style.overflow = 'hidden'; // чтобы не скроллилась страница и модалка при открытой модалке
+        });
+    });
+
+    function closeModal() {                 // DONT REPEAT YOURSELF. Выносим повторы в функцию
+        modal.classList.toggle('show');
+        document.body.style.overflow = '';
+    }
+
+    modalCloseBtn.addEventListener('click', closeModal);
+
+                
+    modal.addEventListener('click', (e) => {  //делаем закрытие модалки по клину на полях
+        if (e.target === modal) {           // если не указать (е),- вызов коллбек функции, а строчкой ниже - event.target - это,
+            closeModal();                   //наверное, будет работать. НО это не правильно и устарело. 
+        }                                   // Всегда использовать, как написал в итоге
+    });
+
+    document.addEventListener('keydown', (e) => {    //закрытие модалки на Esc
+        if (e.code === "Escape" && modal.classList.contains('show')) {
+            closeModal(); 
+        }
+    }); // найти коды клавиш - event.code в гугле
+
 });
