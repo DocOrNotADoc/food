@@ -1,6 +1,6 @@
 window.addEventListener('DOMContentLoaded', () => {
 
-    //tabs
+    // tabs
     const tabs = document.querySelectorAll('.tabheader__item'),
         tabsContent = document.querySelectorAll('.tabcontent'),
         tabsParent = document.querySelector('.tabheader__items');
@@ -39,7 +39,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    //timer
+    // timer
     const deadLine = '2020-07-15';
 
     function getTimeRemaning(endTime) {
@@ -76,7 +76,7 @@ window.addEventListener('DOMContentLoaded', () => {
             seconds = timer.querySelector('#seconds'),
             timeInterval = setInterval(updateClock, 1000);
 
-        updateClock(); // чтобы не ждать секунду до запуска корректной работы таймера. Инициализация.
+        updateClock();                  // чтобы не ждать секунду до запуска корректной работы таймера. Инициализация.
 
         function  updateClock() {
             const t = getTimeRemaning(endTime);
@@ -98,53 +98,46 @@ window.addEventListener('DOMContentLoaded', () => {
     const modalTrigger = document.querySelectorAll('[data-modal]'),
         modal = document.querySelector('.modal'),
         modalCloseBtn = document.querySelector('[data-close]');
-
-
-    // примитивный вариант - на прямых обработчиках (не-тоггл) и квериселектор(без олл). Для теста (?)
-    // modalTrigger.addEventListener('click', () => {
-    //     modal.classList.add('show');
-    //     modal.classList.remove('hide');
-    //     document.body.style.overflow = 'hidden'; // чтобы не скроллилась страница и модалка при открытой модалке
-    // });
-
-    // modalCloseBtn.addEventListener('click', () => {
-    //     modal.classList.remove('show');
-    //     modal.classList.add('hide');
-    //     document.body.style.overflow = ''; // восстанавливаем скролл. Пустые кавычкии восстановят дефолт
-    // });
     
-    // чтобы использовать toggle, проверяем, есть ли в вёрстке, по умолчанию, необходимые классы
-    // modalTrigger.addEventListener('click', () => {
-    //     modal.classList.toggle('show');
-    //     document.body.style.overflow = 'hidden'; // чтобы не скроллилась страница и модалка при открытой модалке
-    // });
-
-    
-    modalTrigger.forEach(btn => {                    // через forEach, для querySelectorAll
-        btn.addEventListener('click', () => {
-            modal.classList.toggle('show');
-            document.body.style.overflow = 'hidden'; // чтобы не скроллилась страница и модалка при открытой модалке
-        });
-    });
-
-    function closeModal() {                 // DONT REPEAT YOURSELF. Выносим повторы в функцию
+    function openModal() {
         modal.classList.toggle('show');
-        document.body.style.overflow = '';
+        document.body.style.overflow = 'hidden';      // чтобы не скроллилась страница и модалка при открытой модалке 
+        clearInterval(modalTimerId);
     }
+
+    function closeModal() {
+        modal.classList.toggle('show');
+        document.body.style.overflow = '';            // восстанавливаем скролл
+    }
+
+    modalTrigger.forEach(btn => {
+        btn.addEventListener('click', openModal);
+    });
 
     modalCloseBtn.addEventListener('click', closeModal);
 
                 
-    modal.addEventListener('click', (e) => {  //делаем закрытие модалки по клину на полях
-        if (e.target === modal) {           // если не указать (е),- вызов коллбек функции, а строчкой ниже - event.target - это,
-            closeModal();                   //наверное, будет работать. НО это не правильно и устарело. 
-        }                                   // Всегда использовать, как написал в итоге
+    modal.addEventListener('click', (e) => {         //делаем закрытие модалки по клину на полях
+        if (e.target === modal) {
+            closeModal();
+        }
     });
 
     document.addEventListener('keydown', (e) => {    //закрытие модалки на Esc
         if (e.code === "Escape" && modal.classList.contains('show')) {
             closeModal(); 
         }
-    }); // найти коды клавиш - event.code в гугле
+    });                                              // найти коды клавиш - event.code в гугле
+
+    const modalTimerId = setTimeout(openModal, 7000);
+
+    function showModalByScroll() {
+        if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+            openModal();
+            window.removeEventListener('scroll', showModalByScroll); 
+        }
+    }
+
+    window.addEventListener('scroll', showModalByScroll);
 
 });
