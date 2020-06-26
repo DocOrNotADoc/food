@@ -129,7 +129,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });                                              // найти коды клавиш - event.code в гугле
 
-    // const modalTimerId = setTimeout(openModal, 7000);
+    const modalTimerId = setTimeout(openModal, 7000);
 
     function showModalByScroll() {
         if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
@@ -247,15 +247,30 @@ window.addEventListener('DOMContentLoaded', () => {
 
 //// передача данных на сервер в формате formdata
 //// мы испльзуем XMLHttpRequest и FormData, то заголовки вручную проставлять не нужно(выдаст ошибку). Это будет сделано автоматически.
-            // request.setRequestHeader('Content-type', 'multipart/form-data');
+////XMLHttpRequest без FormData потребует:  // request.setRequestHeader('Content-type', 'multipart/form-data');
+            request.setRequestHeader('Content-type', 'application/json');
             const formData = new FormData(form);
+
+            const object = {};                                // только для json
+            formData.forEach(function(value, key){            // только для json
+                object[key] = value;                          // только для json
+            });                                               // только для json
+
+            const json = JSON.stringify(object);              // только для json
+
+            request.send(json);                               // только для json
+
                     // важно всегда проверять, чтобы у форм был атрибут name, чтобы у нас получилась пара ключ-значение.
-            request.send(formData);
+            // request.send(formData);                        //XMLHttpRequest
 
             request.addEventListener('load', () => {
                 if (request.status === 200) {
                     console.log(request.response);
                     statusMessage.textContent = message.success;
+                    form.reset();
+                    setTimeout(() => {
+                        statusMessage.remove();
+                    }, 2000);
                 } else {
                     statusMessage.textContent = message.failure;
                 }
