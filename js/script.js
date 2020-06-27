@@ -1,23 +1,24 @@
 window.addEventListener('DOMContentLoaded', () => {
 
-// tabs
-    const tabs = document.querySelectorAll('.tabheader__item'),
+// Tabs
+
+    let tabs = document.querySelectorAll('.tabheader__item'),
         tabsContent = document.querySelectorAll('.tabcontent'),
         tabsParent = document.querySelector('.tabheader__items');
 
     function hideTabContent() {
+
         tabsContent.forEach(item => {
-            // item.style.display = 'none';
             item.classList.add('hide');
             item.classList.remove('show', 'fade');
         });
+
         tabs.forEach(tab => {
             tab.classList.remove('tabheader__item_active');
         });
     }
 
     function showTabContent(i = 0) {
-        // tabsContent[i].style.display = 'block';
         tabsContent[i].classList.add('show', 'fade');
         tabsContent[i].classList.remove('hide');
         tabs[i].classList.add('tabheader__item_active');
@@ -39,14 +40,14 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
 
-// timer
+// Timer
+
     const deadLine = '2020-07-15';
 
     function getTimeRemaning(endTime) {
         const t = Date.parse(endTime) - Date.parse(new Date()),
         // Второй date.parse можно убрать, но оставим элементы идентичными для наглядности.
             days = Math.floor(t / (1000 * 60 * 60 * 24)),
-            // округдение до ближайшего целого
             hours = Math.floor((t / (1000 * 60 * 60)) % 24),
             minutes = Math.floor((t / (1000 * 60)) % 60),
             seconds = Math.floor((t / 1000) % 60);
@@ -76,7 +77,7 @@ window.addEventListener('DOMContentLoaded', () => {
             seconds = timer.querySelector('#seconds'),
             timeInterval = setInterval(updateClock, 1000);
 
-        updateClock();                  // чтобы не ждать секунду до запуска корректной работы таймера. Инициализация.
+        updateClock();
 
         function  updateClock() {
             const t = getTimeRemaning(endTime);
@@ -91,45 +92,45 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
+
     setClock('.timer', deadLine);
 
 
-// modal
-    const modalTrigger = document.querySelectorAll('[data-modal]'),
-        modal = document.querySelector('.modal'),
-        modalCloseBtn = document.querySelector('[data-close]');
-    
-    function openModal() {
-        modal.classList.toggle('show');
-        document.body.style.overflow = 'hidden';      // чтобы не скроллилась страница и модалка при открытой модалке 
-        clearInterval(modalTimerId);
-    }
+// Modal
 
-    function closeModal() {
-        modal.classList.toggle('show');
-        document.body.style.overflow = '';            // восстанавливаем скролл
-    }
+    const modalTrigger = document.querySelectorAll('[data-modal]'),
+        modal = document.querySelector('.modal');
 
     modalTrigger.forEach(btn => {
         btn.addEventListener('click', openModal);
     });
 
-    modalCloseBtn.addEventListener('click', closeModal);
-
+    function closeModal() {
+        modal.classList.add('hide');
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+        
+    function openModal() {
+        modal.classList.add('show');
+        modal.classList.remove('hide');
+        document.body.style.overflow = 'hidden';
+        clearInterval(modalTimerId);
+    }
                 
-    modal.addEventListener('click', (e) => {         //делаем закрытие модалки по клину на полях
-        if (e.target === modal) {
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal || e.target.getAttribute('data-close') == '') {
             closeModal();
         }
     });
 
-    document.addEventListener('keydown', (e) => {    //закрытие модалки на Esc
+    document.addEventListener('keydown', (e) => {
         if (e.code === "Escape" && modal.classList.contains('show')) {
             closeModal(); 
         }
     });                                              // найти коды клавиш - event.code в гугле
 
-    const modalTimerId = setTimeout(openModal, 7000);
+    const modalTimerId = setTimeout(openModal, 50000);
 
     function showModalByScroll() {
         if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
@@ -141,6 +142,7 @@ window.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', showModalByScroll);
 
 // использовать классы для карточек (шаблонизировать их)
+
     class MenuCard {
         constructor(src, alt, title, descr, price, parentSelector, ...classes) {
             this.src = src;
@@ -154,7 +156,6 @@ window.addEventListener('DOMContentLoaded', () => {
             this.changeTuUAH();
         }
 
-        //чтобы конвертировать цену из баксов в гривны
         changeTuUAH() {
             this.price = this.price * this.transfer;
         }
@@ -182,11 +183,6 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // вариант правильный, но не оптимальный
-    // const div = new MenuCard();
-    // div.render();
-
-    // если объект больше не будет использоваться, и сразу вызывается, то можно без переменной.
     new MenuCard(
         "img/tabs/vegy.jpg",
         "vegy",
@@ -217,13 +213,10 @@ window.addEventListener('DOMContentLoaded', () => {
         'menu__item'
     ).render();
 
-// forms
-    //формы по отправке данных. Их 2, поэтому заворачиваем форму в функцию, чтобы просто вызвать её дважды
-    // В этот раз используем XMLHttpRequest()
+// POST forms
     const forms = document.querySelectorAll('form');
-
     const message = {
-        loading: 'Загрузка',
+        loading: 'img/form/spinner.svg',
         success: 'Спасибо! Скоро мы с Вами свяжемся!',
         failure: 'Что-то пошло не так...'
     };
@@ -236,45 +229,62 @@ window.addEventListener('DOMContentLoaded', () => {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            const statusMessage = document.createElement('div');
-            statusMessage.classList.add('status');
-            statusMessage.textContent = message.loading;
-            form.append(statusMessage);
+            let statusMessage = document.createElement('img');
+            statusMessage.src = message.loading;
+            statusMessage.style.cssText = `
+                display: block;
+                margin: 0 auto;
+            `;
+            form.insertAdjacentElement('afterend', statusMessage);
 
 
             const request = new XMLHttpRequest();
             request.open('POST', 'server.php');
 
-//// передача данных на сервер в формате formdata
-//// мы испльзуем XMLHttpRequest и FormData, то заголовки вручную проставлять не нужно(выдаст ошибку). Это будет сделано автоматически.
-////XMLHttpRequest без FormData потребует:  // request.setRequestHeader('Content-type', 'multipart/form-data');
-            request.setRequestHeader('Content-type', 'application/json');
+            request.setRequestHeader('Content-type', 'application/json; charset=utf-8');
             const formData = new FormData(form);
 
-            const object = {};                                // только для json
-            formData.forEach(function(value, key){            // только для json
-                object[key] = value;                          // только для json
-            });                                               // только для json
-
-            const json = JSON.stringify(object);              // только для json
-
-            request.send(json);                               // только для json
-
-                    // важно всегда проверять, чтобы у форм был атрибут name, чтобы у нас получилась пара ключ-значение.
-            // request.send(formData);                        //XMLHttpRequest
+            const object = {};
+            formData.forEach(function(value, key){
+                object[key] = value;
+            });
+            const json = JSON.stringify(object);
+            request.send(json);
 
             request.addEventListener('load', () => {
                 if (request.status === 200) {
                     console.log(request.response);
-                    statusMessage.textContent = message.success;
+                    showThanksModal(message.success);
+                    statusMessage.remove();
                     form.reset();
-                    setTimeout(() => {
-                        statusMessage.remove();
-                    }, 2000);
                 } else {
-                    statusMessage.textContent = message.failure;
+                    showThanksModal(message.failure);
                 }
             });
         });
+    }
+
+    function showThanksModal(message) {
+        const prevModalDialog = document.querySelector('.modal__dialog');
+
+        prevModalDialog.classList.add('hide');
+        openModal();
+
+        const thanksModal = document.createElement('div');
+        thanksModal.classList.add('modal__dialog');
+        thanksModal.innerHTML = `
+            <div class="modal__content">
+                <div class="modal__close" data-close>×</div>
+                <div class="modal__title">${message}</div>
+            </div>
+        `;
+
+        document.querySelector('.modal').append(thanksModal);
+        setTimeout(() => {
+            thanksModal.remove();
+            prevModalDialog.classList.add('show');
+            prevModalDialog.classList.remove('hide');
+            closeModal();
+        }, 4000);
     }
 });
