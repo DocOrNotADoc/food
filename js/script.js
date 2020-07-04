@@ -199,7 +199,8 @@ window.addEventListener('DOMContentLoaded', () => {
                 new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
             });
         });
-                // или вариант Б,- не создавая класс
+
+                                        // или вариант Б,- не создавая класс
     // getResource('http://localhost:3000/menu')
     //     .then(data => createCard(data));
 
@@ -226,6 +227,14 @@ window.addEventListener('DOMContentLoaded', () => {
     //             document.querySelector('.menu .container').append(element);
     //         });
     //     }
+
+                                        //и или вариант В - с помощбю библиотек. Нпример, Axios:
+    // axios.get('http://localhost:3000/menu')
+    //     .then(data => {
+    //         data.data.forEach(({img, altimg, title, descr, price}) => {
+    //             new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
+    //         });
+    //     });
 
 // POST forms
     const forms = document.querySelectorAll('form');
