@@ -16,3 +16,5 @@ fetch('https://jsonplaceholder.typicode.com/posts', {
     .then(json => console.log(json));
 ```
 npx json-server db.json
+
+сделать ,чтобы быстрый мульти-клик по стрелке не делал выделение
