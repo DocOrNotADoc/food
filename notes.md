@@ -13,3 +13,4 @@ fetch('https://jsonplaceholder.typicode.com/posts', {
 npx json-server db.json
 
 Доделать слайдер, чтобы можно было свайпать пальцем / мышкой и так листать
+

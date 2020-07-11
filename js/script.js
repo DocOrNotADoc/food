@@ -296,11 +296,19 @@ window.addEventListener('DOMContentLoaded', () => {
 
     if (slides.length < 10) {
         total.textContent = `0${slides.length}`;
-        current.textContent = `0${slideIndex}`;
     } else {
         total.textContent = slides.length;
-        current.textContent = slideIndex;
     }
+
+    function showCurrentSlideNumber(){
+        if (slides.length < 10) {
+            current.textContent = `0${slideIndex}`;
+        } else {
+            current.textContent = slideIndex;
+        }
+    }
+
+    showCurrentSlideNumber();
 
     slidesField.style.width = 100 * slides.length + '%';
     slidesField.style.display = 'flex';
@@ -343,6 +351,11 @@ window.addEventListener('DOMContentLoaded', () => {
         dots.push(dot);
     }
 
+    function dotsOpasity(){
+        dots.forEach(dot => dot.style.opacity = '.5');
+        dots[slideIndex - 1].style.opacity = 1;
+    }
+
     next.addEventListener('click', () => {
         if (offset == +width.slice(0, - 2) * (slides.length - 1)){
             offset = 0;
@@ -358,14 +371,9 @@ window.addEventListener('DOMContentLoaded', () => {
             slideIndex++;
         }
 
-        if (slides.length < 10) {
-            current.textContent = `0${slideIndex}`;
-        } else {
-            current.textContent = slideIndex;
-        }
+        showCurrentSlideNumber();
 
-        dots.forEach(dot => dot.style.opacity = '.5');
-        dots[slideIndex - 1].style.opacity = 1;
+        dotsOpasity();
     });
 
     prev.addEventListener('click', () => {
@@ -383,14 +391,9 @@ window.addEventListener('DOMContentLoaded', () => {
             slideIndex--;
         }
 
-        if (slides.length < 10) {
-            current.textContent = `0${slideIndex}`;
-        } else {
-            current.textContent = slideIndex;
-        }
+        showCurrentSlideNumber();
 
-        dots.forEach(dot => dot.style.opacity = '.5');
-        dots[slideIndex - 1].style.opacity = 1;
+        dotsOpasity();
     });
 
     dots.forEach(dot => {
@@ -402,14 +405,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
             slidesField.style.transform = `translateX(-${offset}px)`;
             
-            if (slides.length < 10) {
-                current.textContent = `0${slideIndex}`;
-            } else {
-                current.textContent = slideIndex;
-            }
+            showCurrentSlideNumber();
             
-            dots.forEach(dot => dot.style.opacity = '.5');
-            dots[slideIndex - 1].style.opacity = 1;
+            dotsOpasity();
         });
     });
 });
