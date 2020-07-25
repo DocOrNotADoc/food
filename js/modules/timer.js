@@ -1,6 +1,4 @@
-function timer() {
-
-    const deadLine = '2020-08-15';
+function timer(id, deadline) {
 
     function getTimeRemaning(endTime) {
         const t = Date.parse(endTime) - Date.parse(new Date()),
@@ -51,7 +49,7 @@ function timer() {
         }
     }
 
-    setClock('.timer', deadLine);
+    setClock(id, deadline);
 }
 
-module.exports = timer;
+export default timer;
